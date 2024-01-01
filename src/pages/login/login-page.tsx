@@ -46,12 +46,19 @@ const LoginPage = () => {
       const { data } = await refetch();
 
       if (!isAllowed(data)) {
-        await logout();
-        storeLogout();
+        logoutMutate();
         return;
       }
 
       setUser(data);
+    },
+  });
+
+  const { mutate: logoutMutate } = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: logout,
+    onSuccess: () => {
+      storeLogout();
     },
   });
 
