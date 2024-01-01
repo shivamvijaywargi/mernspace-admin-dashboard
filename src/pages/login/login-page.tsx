@@ -5,14 +5,6 @@ import Logo from "../../components/icons/logo";
 const LoginPage = () => {
   return (
     <>
-      {/* <h1>Sign In</h1> */}
-      {/* <input type="text" name="username" placeholder="Username" />
-      <input type="password" name="password" placeholder="Password" />
-      <input type="button" value="Login" role="button" />
-      <label htmlFor="remember-me">Remember me</label>
-      <input type="checkbox" name="Remember me" id="remember-me" />
-      <a href="#">Forgot Password</a> */}
-
       <Layout
         style={{
           height: "100vh",
@@ -47,7 +39,10 @@ const LoginPage = () => {
               </Space>
             }
           >
-            <Form initialValues={{ remember: true }}>
+            <Form
+              initialValues={{ remember: true }}
+              onFinish={(values) => console.log(values)}
+            >
               <Form.Item
                 name="email"
                 rules={[
