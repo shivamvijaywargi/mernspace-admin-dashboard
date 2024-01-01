@@ -7,8 +7,8 @@ describe("Login page", () => {
     render(<LoginPage />);
 
     expect(screen.getByText(/Sign in/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Username")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Password")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("john@gmail.com")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("********")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Login" })).toBeInTheDocument();
     expect(
       screen.getByRole("checkbox", { name: "Remember me" })
