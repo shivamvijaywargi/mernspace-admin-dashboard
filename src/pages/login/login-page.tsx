@@ -16,6 +16,7 @@ import { ICredentials } from "../../types";
 import { login, self, logout } from "../../http/api";
 import { useAuthStore } from "../../store";
 import { usePermission } from "../../hooks/usePermission";
+import { redirect } from "react-router-dom";
 
 const loginUser = async (credentials: ICredentials) => {
   const { data } = await login(credentials);
@@ -51,6 +52,7 @@ const LoginPage = () => {
       }
 
       setUser(data);
+      redirect("/");
     },
   });
 
