@@ -73,19 +73,6 @@ const UsersPage = () => {
       {isError && <div>Error: {error.message}</div>}
 
       <Table style={{ marginTop: 20 }} columns={columns} dataSource={users} />
-
-      {/* {users && (
-        <div>
-          <h1>Users</h1>
-          <ul>
-            {users.map((user: IUser) => (
-              <li key={user.id}>
-                {user.firstName} {user.lastName}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )} */}
     </>
   );
 };

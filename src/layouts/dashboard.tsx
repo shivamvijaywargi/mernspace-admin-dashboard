@@ -24,37 +24,51 @@ import BasketIcon from "../components/icons/BasketIcon";
 import { useMutation } from "@tanstack/react-query";
 import { logout } from "../http/api";
 
-const items = [
-  {
-    key: "/",
-    icon: <Icon component={HomeIcon} />,
-    label: <NavLink to="/">Home</NavLink>,
-  },
-  {
-    key: "/users",
-    icon: <Icon component={UserIcon} />,
-    label: <NavLink to="/users">Users</NavLink>,
-  },
-  {
-    key: "/restaurants",
-    icon: <Icon component={FoodIcon} />,
-    label: <NavLink to="/restaurants">Restaurants</NavLink>,
-  },
-  {
-    key: "/products",
-    icon: <Icon component={BasketIcon} />,
-    label: <NavLink to="/products">Products</NavLink>,
-  },
-  {
-    key: "/promos",
-    icon: <Icon component={GiftIcon} />,
-    label: <NavLink to="/promos">Promos</NavLink>,
-  },
-];
+const getMenuItems = (role: string) => {
+  const baseItems = [
+    {
+      key: "/",
+      icon: <Icon component={HomeIcon} />,
+      label: <NavLink to="/">Home</NavLink>,
+    },
+    {
+      key: "/restaurants",
+      icon: <Icon component={FoodIcon} />,
+      label: <NavLink to="/restaurants">Restaurants</NavLink>,
+    },
+    {
+      key: "/products",
+      icon: <Icon component={BasketIcon} />,
+      label: <NavLink to="/products">Products</NavLink>,
+    },
+    {
+      key: "/promos",
+      icon: <Icon component={GiftIcon} />,
+      label: <NavLink to="/promos">Promos</NavLink>,
+    },
+  ];
+
+  if (role === "admin") {
+    let menuItems = [...baseItems];
+
+    menuItems.splice(1, 0, {
+      key: "/users",
+      icon: <Icon component={UserIcon} />,
+      label: <NavLink to="/users">Users</NavLink>,
+    });
+
+    return menuItems;
+  }
+
+  return baseItems;
+};
 
 const Dashboard = () => {
   const { logout: storeLogout, user } = useAuthStore();
+
   const [collapsed, setCollapsed] = useState(false);
+
+  const items = getMenuItems(user?.role ?? "");
 
   const { mutate: logoutMutate } = useMutation({
     mutationKey: ["logout"],
