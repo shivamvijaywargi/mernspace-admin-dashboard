@@ -1,7 +1,9 @@
-import { Breadcrumb, Table } from "antd";
-import { RightOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { Breadcrumb, Button, Drawer, Space, Table } from "antd";
+import { RightOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+
 import { getUsers } from "../../http/api";
 import { IUser } from "../../types";
 import formatDate from "../../utils/formatDate";
@@ -53,6 +55,8 @@ const columns = [
 ];
 
 const UsersPage = () => {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const {
     data: users,
     isLoading,
@@ -78,7 +82,15 @@ const UsersPage = () => {
       {isLoading && <div>Loading...</div>}
       {isError && <div>Error: {error.message}</div>}
 
-      <UsersFilter onFilterChange={onFilterChange} />
+      <UsersFilter onFilterChange={onFilterChange}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setIsDrawerOpen(true)}
+        >
+          Add User
+        </Button>
+      </UsersFilter>
 
       <Table
         style={{ marginTop: 20 }}
@@ -86,6 +98,26 @@ const UsersPage = () => {
         dataSource={users}
         rowKey={"id"}
       />
+
+      <Drawer
+        title="Create User"
+        width={720}
+        destroyOnClose
+        open={isDrawerOpen}
+        onClose={() => {
+          setIsDrawerOpen(false);
+        }}
+        extra={
+          <Space>
+            <Button onClick={() => setIsDrawerOpen(false)}>Cancel</Button>
+            <Button type="primary">Submit</Button>
+          </Space>
+        }
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Drawer>
     </>
   );
 };
