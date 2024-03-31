@@ -11,3 +11,9 @@ export interface IUser {
   role: string;
   createdAt: string;
 }
+
+export interface IRestaurant {
+  id: number;
+  name: string;
+  address: string;
+}
