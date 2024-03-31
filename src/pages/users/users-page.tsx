@@ -63,19 +63,29 @@ const UsersPage = () => {
     queryFn: () => getUsers().then((res) => res.data),
   });
 
+  const onFilterChange = (filterName: string, filterValue: string) => {
+    console.log(filterName, filterValue);
+  };
+
   return (
     <>
       <Breadcrumb
         items={[{ title: <Link to={"/"}>Dashboard</Link> }, { title: "Users" }]}
         separator={<RightOutlined />}
+        style={{ marginBottom: 20 }}
       />
 
       {isLoading && <div>Loading...</div>}
       {isError && <div>Error: {error.message}</div>}
 
-      <UsersFilter />
+      <UsersFilter onFilterChange={onFilterChange} />
 
-      <Table style={{ marginTop: 20 }} columns={columns} dataSource={users} />
+      <Table
+        style={{ marginTop: 20 }}
+        columns={columns}
+        dataSource={users}
+        rowKey={"id"}
+      />
     </>
   );
 };
