@@ -8,7 +8,7 @@ const RestaurantsFilter = ({ children }: IRestaurantsFilterProps) => {
   return (
     <Card>
       <Row justify={"space-between"}>
-        <Col>
+        <Col span={10}>
           <Input.Search placeholder="Search" />
         </Col>
         <Col>{children}</Col>
