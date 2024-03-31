@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../../http/api";
 import { IUser } from "../../types";
 import formatDate from "../../utils/formatDate";
-import UsersFilter from "./ users-filter";
+import UsersFilter from "./users-filter";
 
 const columns = [
   {
