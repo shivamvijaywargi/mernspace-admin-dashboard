@@ -137,10 +137,7 @@ const UsersForm = () => {
                     onChange={() => {}}
                   >
                     {restaurants?.map((restaurant: IRestaurant) => (
-                      <Select.Option
-                        value={restaurant.name}
-                        key={restaurant.id}
-                      >
+                      <Select.Option value={restaurant.id} key={restaurant.id}>
                         {restaurant.name}
                       </Select.Option>
                     ))}

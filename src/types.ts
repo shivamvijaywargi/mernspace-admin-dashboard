@@ -12,6 +12,10 @@ export interface IUser {
   createdAt: string;
 }
 
+export interface ICreateUser extends IUser {
+  tenantId: number;
+}
+
 export interface IRestaurant {
   id: number;
   name: string;
