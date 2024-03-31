@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUsers } from "../../http/api";
 import { IUser } from "../../types";
 import formatDate from "../../utils/formatDate";
+import UsersFilter from "./ users-filter";
 
 const columns = [
   {
@@ -71,6 +72,8 @@ const UsersPage = () => {
 
       {isLoading && <div>Loading...</div>}
       {isError && <div>Error: {error.message}</div>}
+
+      <UsersFilter />
 
       <Table style={{ marginTop: 20 }} columns={columns} dataSource={users} />
     </>
