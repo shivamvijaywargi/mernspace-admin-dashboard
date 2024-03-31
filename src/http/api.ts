@@ -7,3 +7,4 @@ export const login = (credentials: ICredentials) =>
 export const self = () => api.get("/auth/self");
 export const logout = () => api.post("/auth/logout");
 export const getUsers = () => api.get("/users");
+export const getRestaurants = () => api.get("/tenants");
