@@ -21,3 +21,8 @@ export interface IRestaurant {
   name: string;
   address: string;
 }
+
+export interface IFieldData {
+  name: string[];
+  value?: string;
+}

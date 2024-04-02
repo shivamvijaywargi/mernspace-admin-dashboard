@@ -25,7 +25,7 @@ import {
 } from "@tanstack/react-query";
 
 import { createUser, getUsers } from "../../http/api";
-import { ICreateUser, IUser } from "../../types";
+import { ICreateUser, IFieldData, IUser } from "../../types";
 import formatDate from "../../utils/formatDate";
 import UsersFilter from "./users-filter";
 import UsersForm from "./users-form";
@@ -83,6 +83,7 @@ const UsersPage = () => {
   } = theme.useToken();
 
   const [form] = Form.useForm();
+  const [filterForm] = Form.useForm();
 
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
@@ -103,8 +104,12 @@ const UsersPage = () => {
   } = useQuery({
     queryKey: ["users", queryParams],
     queryFn: () => {
+      const filteredParams = Object.fromEntries(
+        Object.entries(queryParams).filter((item) => !!item[1])
+      );
+
       const queryString = new URLSearchParams(
-        queryParams as unknown as Record<string, string>
+        filteredParams as unknown as Record<string, string>
       ).toString();
 
       return getUsers(queryString).then((res) => res.data);
@@ -124,14 +129,23 @@ const UsersPage = () => {
     },
   });
 
-  const onFilterChange = (filterName: string, filterValue: string) => {
-    console.log(filterName, filterValue);
-  };
-
   const onHandleSubmit = async () => {
     await form.validateFields();
 
     userMutate(form.getFieldsValue());
+  };
+
+  const onFilterChange = (changedFields: IFieldData[]) => {
+    const changedFilterFields = changedFields
+      .map((item) => ({
+        [item.name[0]]: item.value,
+      }))
+      .reduce((prev, curr) => ({ ...prev, ...curr }), {});
+
+    setQueryParams((prev) => ({
+      ...prev,
+      ...changedFilterFields,
+    }));
   };
 
   if (user?.role !== "admin") {
@@ -160,15 +174,17 @@ const UsersPage = () => {
         )}
       </Flex>
 
-      <UsersFilter onFilterChange={onFilterChange}>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => setIsDrawerOpen(true)}
-        >
-          Add User
-        </Button>
-      </UsersFilter>
+      <Form form={filterForm} onFieldsChange={onFilterChange}>
+        <UsersFilter>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            Add User
+          </Button>
+        </UsersFilter>
+      </Form>
 
       <Table
         style={{ marginTop: 20 }}
