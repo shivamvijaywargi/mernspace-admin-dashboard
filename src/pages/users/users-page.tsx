@@ -10,6 +10,7 @@ import formatDate from "../../utils/formatDate";
 import UsersFilter from "./users-filter";
 import UsersForm from "./users-form";
 import { useAuthStore } from "../../store";
+import { PER_PAGE } from "../../constants";
 
 const columns = [
   {
@@ -66,6 +67,11 @@ const UsersPage = () => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
 
+  const [queryParams, setQueryParams] = useState({
+    limit: PER_PAGE,
+    page: 1,
+  });
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Fetch users
@@ -75,8 +81,14 @@ const UsersPage = () => {
     isError,
     error,
   } = useQuery({
-    queryKey: ["users"],
-    queryFn: () => getUsers().then((res) => res.data),
+    queryKey: ["users", queryParams],
+    queryFn: () => {
+      const queryString = new URLSearchParams(
+        queryParams as unknown as Record<string, string>
+      ).toString();
+
+      return getUsers(queryString).then((res) => res.data);
+    },
   });
 
   // Create User
@@ -129,8 +141,19 @@ const UsersPage = () => {
       <Table
         style={{ marginTop: 20 }}
         columns={columns}
-        dataSource={users}
+        dataSource={users?.data}
         rowKey={"id"}
+        pagination={{
+          total: users?.total,
+          pageSize: queryParams.limit,
+          current: queryParams.page,
+          onChange: (page: number) => {
+            setQueryParams((prev) => ({
+              ...prev,
+              page,
+            }));
+          },
+        }}
       />
 
       <Drawer
