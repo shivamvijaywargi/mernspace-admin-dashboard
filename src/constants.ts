@@ -1,1 +1,1 @@
-export const PER_PAGE = 6; // limit of data per page
+export const PER_PAGE = 2; // limit of data per page

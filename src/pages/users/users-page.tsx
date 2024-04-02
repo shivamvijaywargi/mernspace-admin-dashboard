@@ -1,8 +1,28 @@
 import { useState } from "react";
-import { Breadcrumb, Button, Drawer, Form, Space, Table, theme } from "antd";
-import { RightOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Breadcrumb,
+  Button,
+  Drawer,
+  Flex,
+  Form,
+  Space,
+  Spin,
+  Table,
+  Typography,
+  theme,
+} from "antd";
+import {
+  RightOutlined,
+  PlusOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import { Link, Navigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { createUser, getUsers } from "../../http/api";
 import { ICreateUser, IUser } from "../../types";
@@ -77,7 +97,7 @@ const UsersPage = () => {
   // Fetch users
   const {
     data: users,
-    isLoading,
+    isFetching,
     isError,
     error,
   } = useQuery({
@@ -89,6 +109,7 @@ const UsersPage = () => {
 
       return getUsers(queryString).then((res) => res.data);
     },
+    placeholderData: keepPreviousData,
   });
 
   // Create User
@@ -119,14 +140,25 @@ const UsersPage = () => {
 
   return (
     <>
-      <Breadcrumb
-        items={[{ title: <Link to={"/"}>Dashboard</Link> }, { title: "Users" }]}
-        separator={<RightOutlined />}
-        style={{ marginBottom: 20 }}
-      />
+      <Flex justify="space-between">
+        <Breadcrumb
+          items={[
+            { title: <Link to={"/"}>Dashboard</Link> },
+            { title: "Users" },
+          ]}
+          separator={<RightOutlined />}
+          style={{ marginBottom: 20 }}
+        />
 
-      {isLoading && <div>Loading...</div>}
-      {isError && <div>Error: {error.message}</div>}
+        {isFetching && (
+          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+        )}
+        {isError && (
+          <Typography.Text type="danger">
+            Error: {error.message}
+          </Typography.Text>
+        )}
+      </Flex>
 
       <UsersFilter onFilterChange={onFilterChange}>
         <Button
