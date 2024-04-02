@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Breadcrumb,
   Button,
@@ -23,12 +23,13 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { debounce } from "lodash";
 
+import UsersFilter from "./users-filter";
+import UsersForm from "./users-form";
 import { createUser, getUsers } from "../../http/api";
 import { ICreateUser, IFieldData, IUser } from "../../types";
 import formatDate from "../../utils/formatDate";
-import UsersFilter from "./users-filter";
-import UsersForm from "./users-form";
 import { useAuthStore } from "../../store";
 import { PER_PAGE } from "../../constants";
 
@@ -135,6 +136,12 @@ const UsersPage = () => {
     userMutate(form.getFieldsValue());
   };
 
+  const debouncedQUpdate = useMemo(() => {
+    return debounce((value: string | undefined) => {
+      setQueryParams((prev) => ({ ...prev, q: value, currentPage: 1 }));
+    }, 500);
+  }, []);
+
   const onFilterChange = (changedFields: IFieldData[]) => {
     const changedFilterFields = changedFields
       .map((item) => ({
@@ -142,10 +149,14 @@ const UsersPage = () => {
       }))
       .reduce((prev, curr) => ({ ...prev, ...curr }), {});
 
-    setQueryParams((prev) => ({
-      ...prev,
-      ...changedFilterFields,
-    }));
+    if ("q" in changedFilterFields) {
+      debouncedQUpdate(changedFilterFields.q);
+    } else {
+      setQueryParams((prev) => ({
+        ...prev,
+        ...changedFilterFields,
+      }));
+    }
   };
 
   if (user?.role !== "admin") {
