@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, Navigate, Outlet } from "react-router-dom";
+import { NavLink, Navigate, Outlet, useLocation } from "react-router-dom";
 import {
   Avatar,
   Badge,
@@ -66,6 +66,8 @@ const getMenuItems = (role: string) => {
 const Dashboard = () => {
   const { logout: storeLogout, user } = useAuthStore();
 
+  const location = useLocation();
+
   const [collapsed, setCollapsed] = useState(false);
 
   const items = getMenuItems(user?.role ?? "");
@@ -83,7 +85,13 @@ const Dashboard = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  if (user === null) return <Navigate to="/auth/login" replace={true} />;
+  if (user === null)
+    return (
+      <Navigate
+        to={`/auth/login?returnTo=${location.pathname}`}
+        replace={true}
+      />
+    );
 
   return (
     <div>
