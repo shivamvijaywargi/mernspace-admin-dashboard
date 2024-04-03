@@ -9,6 +9,7 @@ export interface IUser {
   lastName: string;
   email: string;
   role: string;
+  tenant: IRestaurant | null;
   createdAt: string;
 }
 
