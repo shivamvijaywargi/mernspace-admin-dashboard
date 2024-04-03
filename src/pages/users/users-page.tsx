@@ -146,7 +146,7 @@ const UsersPage = () => {
 
   const debouncedQUpdate = useMemo(() => {
     return debounce((value: string | undefined) => {
-      setQueryParams((prev) => ({ ...prev, q: value, currentPage: 1 }));
+      setQueryParams((prev) => ({ ...prev, q: value, page: 1 }));
     }, 500);
   }, []);
 
@@ -163,6 +163,7 @@ const UsersPage = () => {
       setQueryParams((prev) => ({
         ...prev,
         ...changedFilterFields,
+        page: 1,
       }));
     }
   };
