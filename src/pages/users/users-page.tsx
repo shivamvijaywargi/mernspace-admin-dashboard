@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Breadcrumb,
   Button,
@@ -27,7 +27,7 @@ import { debounce } from "lodash";
 
 import UsersFilter from "./users-filter";
 import UsersForm from "./users-form";
-import { createUser, getUsers } from "../../http/api";
+import { createUser, getUsers, updateUser } from "../../http/api";
 import { ICreateUser, IFieldData, IUser } from "../../types";
 import formatDate from "../../utils/formatDate";
 import { useAuthStore } from "../../store";
@@ -77,13 +77,6 @@ const columns = [
       return formatDate(record.createdAt);
     },
   },
-  {
-    title: "Action",
-    key: "action",
-    render: (_text: string, record: IUser) => (
-      <Link to={`/users/${record.id}`}>Edit</Link>
-    ),
-  },
 ];
 
 const UsersPage = () => {
@@ -101,8 +94,20 @@ const UsersPage = () => {
     limit: PER_PAGE,
     page: 1,
   });
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [currentEditingUser, setCurrentEditingUser] = useState<IUser | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (currentEditingUser) {
+      setIsDrawerOpen(true);
+      form.setFieldsValue({
+        ...currentEditingUser,
+        tenantId: currentEditingUser?.tenant?.id,
+      });
+    }
+  }, [currentEditingUser, form]);
 
   // Fetch users
   const {
@@ -138,10 +143,31 @@ const UsersPage = () => {
     },
   });
 
+  // Update User
+  const { mutate: updateUserMutate } = useMutation({
+    mutationKey: ["update-user"],
+    mutationFn: (data: ICreateUser) =>
+      updateUser(currentEditingUser!.id, data).then((res) => res.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      return;
+    },
+  });
+
   const onHandleSubmit = async () => {
     await form.validateFields();
 
-    userMutate(form.getFieldsValue());
+    const isEditMode = !!currentEditingUser;
+
+    if (isEditMode) {
+      await updateUserMutate(form.getFieldsValue());
+    } else {
+      await userMutate(form.getFieldsValue());
+    }
+
+    form.resetFields();
+    setIsDrawerOpen(false);
+    setCurrentEditingUser(null);
   };
 
   const debouncedQUpdate = useMemo(() => {
@@ -208,7 +234,25 @@ const UsersPage = () => {
 
       <Table
         style={{ marginTop: 20 }}
-        columns={columns}
+        columns={[
+          ...columns,
+          {
+            title: "Action",
+            key: "action",
+            render: (_text: string, record: IUser) => (
+              <Space>
+                <Button
+                  type="link"
+                  onClick={() => {
+                    setCurrentEditingUser(record);
+                  }}
+                >
+                  Edit
+                </Button>
+              </Space>
+            ),
+          },
+        ]}
         dataSource={users?.data}
         rowKey={"id"}
         pagination={{
@@ -227,12 +271,13 @@ const UsersPage = () => {
       />
 
       <Drawer
-        title="Create User"
+        title={currentEditingUser ? "Edit User" : "Add User"}
         width={720}
         styles={{ body: { backgroundColor: colorBgLayout } }}
         destroyOnClose
         open={isDrawerOpen}
         onClose={() => {
+          setCurrentEditingUser(null);
           setIsDrawerOpen(false);
         }}
         extra={
@@ -252,7 +297,7 @@ const UsersPage = () => {
         }
       >
         <Form layout="vertical" form={form}>
-          <UsersForm />
+          <UsersForm isEditing={!!currentEditingUser} />
         </Form>
       </Drawer>
     </>

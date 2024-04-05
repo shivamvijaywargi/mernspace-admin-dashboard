@@ -11,6 +11,8 @@ export const logout = () => api.post("/auth/logout");
 export const getUsers = (queryString: string) =>
   api.get(`/users?${queryString}`);
 export const createUser = (user: ICreateUser) => api.post("/users", user);
+export const updateUser = (id: number, user: ICreateUser) =>
+  api.patch(`/users/${id}`, user);
 
 // Tenants/Restaurants API endpoints
 export const getRestaurants = () => api.get("/tenants");

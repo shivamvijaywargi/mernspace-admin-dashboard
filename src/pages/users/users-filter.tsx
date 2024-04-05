@@ -17,7 +17,12 @@ const UsersFilter = ({ children }: IUserFilterProps) => {
             </Col>
             <Col span={8}>
               <Form.Item name="role">
-                <Select placeholder="Role" style={{ width: "100%" }} allowClear>
+                <Select
+                  placeholder="Role"
+                  style={{ width: "100%" }}
+                  allowClear
+                  id="select_box_user_role"
+                >
                   <Select.Option value="admin">Admin</Select.Option>
                   <Select.Option value="manager">Manager</Select.Option>
                   <Select.Option value="customer">Customer</Select.Option>
