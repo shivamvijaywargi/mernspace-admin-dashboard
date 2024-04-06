@@ -9,6 +9,8 @@ const UsersForm = ({ isEditing = false }: { isEditing: boolean }) => {
     queryFn: () => getRestaurants().then((res) => res.data.tenants),
   });
 
+  const selectedRole = Form.useWatch("role");
+
   return (
     <Row>
       <Col span={24}>
@@ -116,36 +118,40 @@ const UsersForm = ({ isEditing = false }: { isEditing: boolean }) => {
                   >
                     <Select.Option value="admin">Admin</Select.Option>
                     <Select.Option value="manager">Manager</Select.Option>
-                    <Select.Option value="customer">Customer</Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={12}>
-                <Form.Item
-                  label="Restaurant"
-                  name="tenantId"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select a restaurant",
-                    },
-                  ]}
-                >
-                  <Select
-                    placeholder="Restaurant"
-                    size="large"
-                    allowClear
-                    style={{ width: "100%" }}
-                    onChange={() => {}}
+              {selectedRole === "manager" && (
+                <Col span={12}>
+                  <Form.Item
+                    label="Restaurant"
+                    name="tenantId"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a restaurant",
+                      },
+                    ]}
                   >
-                    {restaurants?.map((restaurant: IRestaurant) => (
-                      <Select.Option value={restaurant.id} key={restaurant.id}>
-                        {restaurant.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
+                    <Select
+                      placeholder="Restaurant"
+                      size="large"
+                      allowClear
+                      style={{ width: "100%" }}
+                      onChange={() => {}}
+                    >
+                      {restaurants?.map((restaurant: IRestaurant) => (
+                        <Select.Option
+                          value={restaurant.id}
+                          key={restaurant.id}
+                        >
+                          {restaurant.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
           </Card>
         </Space>
